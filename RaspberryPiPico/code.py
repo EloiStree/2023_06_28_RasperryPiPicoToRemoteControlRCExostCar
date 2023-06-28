@@ -18,7 +18,7 @@ power_on_at_start=True
 ## Will trigger a while loop to run 8 9 10 11 pins in a loop
 motor_debug_test=False
 
-usePrintlog=False
+usePrintlog=True
 
 # My relay is inversed
 motorOn=False
@@ -65,12 +65,12 @@ def initiate_rccarpin_as_out():
 def set_all_rccarpin_to(state):
     for pin in rc_car_pins_created:
         pin.value( not state)
+        # Maybe
+        #pin.value( state? motorOn : motoroff)
         
 def set_pin_rccar_to(index ,state):
     rc_car_pins_created[index].value(not state)
-def set_pin_four_motor(leftForward, rightForward, ):
-    rc_car_pins_created[index].value(not state)
-
+        #pin.value( state? motorOn : motoroff)
 
 def set_lf_rf_lb_rb(lf, rf, lb, rb):
     set_pin_rccar_to(leftForwardIndex, lf)
@@ -187,10 +187,6 @@ if motor_debug_test:
             
             
 
-pin = Pin(26, Pin.OUT)
-pin.value(True)
-time.sleep(5);
-pin.value(False)
             
 line = b''  # Initialize an empty line buffer
 data = ' '
