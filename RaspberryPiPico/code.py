@@ -12,26 +12,33 @@ from machine import UART
 uart = machine.UART(0, 9600)
 uart.init(9600, bits=8, parity=None, stop=1)
 
+## Set the power of the remote control on at star
 power_on_at_start=True
 
+## Will trigger a while loop to run 8 9 10 11 pins in a loop
 motor_debug_test=False
 
+usePrintlog=False
+
+# My relay is inversed
 motorOn=False
 motorOff=True
 
+# The pin int id
 leftForwardPin =8
 leftBackwardPin =9
 rightForwardPin =10
 rightBackwardPin =11
 powerOnOfPin=12
 
+# The index of the pin in the array of Pin objects
 leftForwardIndex =0
 leftBackwardIndex =1
 rightForwardIndex =2
 rightBackwardIndex =3
 powerOnOfIndex=4
 
-
+## All the pin to use.
 rc_car_pins = [
 
     leftForwardPin, # Left Forward
@@ -40,6 +47,7 @@ rc_car_pins = [
     rightBackwardPin,# right backward
     powerOnOfPin, # turn on off the power
 ]
+## All the pin objects of the RC car to control
 rc_car_pins_created= [
     
 ]
@@ -64,37 +72,60 @@ def set_pin_four_motor(leftForward, rightForward, ):
     rc_car_pins_created[index].value(not state)
 
 
+def set_lf_rf_lb_rb(lf, rf, lb, rb):
+    set_pin_rccar_to(leftForwardIndex, lf)
+    set_pin_rccar_to(rightForwardIndex, rf)
+    set_pin_rccar_to(leftBackwardIndex, lb)
+    set_pin_rccar_to(rightBackwardIndex, rb)
 
 def uartToAction(message):
-    print("|"+message+"|")
+    if usePrintlog:
+        print("|"+message+"|")
     tokens = message.split(' ')
     
     for shortcut in tokens:
-        shortcut = shortcut.strip().lower() 
-        print("#"+shortcut+"#")
-        if "on" in shortcut  or "1" == shortcut  :
+        shortcut = shortcut.strip().lower()
+        if usePrintlog:
+            print("#"+shortcut+"#")
+        if "on" == shortcut  or "1" == shortcut  :
             set_pin_rccar_to(powerOnOfIndex, True)
             
-        elif "off" in shortcut or "0" == shortcut :
-            set_pin_rccar_to(powerOnOfIndex, True)
+        elif "off" == shortcut or "0" == shortcut :
+            set_pin_rccar_to(powerOnOfIndex, False)
             
-        elif "lf0" in shortcut :
+        elif "lf0" == shortcut :
             set_pin_rccar_to(leftForwardIndex, False)
-        elif "rf0" in shortcut :
+        elif "rf0" == shortcut :
             set_pin_rccar_to(rightForwardIndex, False)
-        elif "lb0" in shortcut :
+        elif "lb0" == shortcut :
             set_pin_rccar_to(leftBackwardIndex, False)
-        elif "rb0" in shortcut :
+        elif "rb0" == shortcut : 
             set_pin_rccar_to(rightBackwardIndex, False)
             
-        elif "lf1" in shortcut :
+        elif "lf1" ==shortcut :
             set_pin_rccar_to(leftForwardIndex, True)
-        elif "rf1" in shortcut :
+        elif "rf1" ==shortcut :
             set_pin_rccar_to(rightForwardIndex, True)
-        elif "lb1" in shortcut :
+        elif "lb1" ==shortcut :
             set_pin_rccar_to(leftBackwardIndex, True)
-        elif "rb1" in shortcut :
+        elif "rb1" ==shortcut :
             set_pin_rccar_to(rightBackwardIndex, True)
+        
+        elif "stop" ==shortcut or "s" ==shortcut :
+            set_lf_rf_lb_rb(0,0,0,0)
+            
+        elif "up" ==shortcut or "u"  ==shortcut :
+            set_lf_rf_lb_rb(1,1,0,0)
+        elif "down" ==shortcut or "d"  ==shortcut :
+            set_lf_rf_lb_rb(0,0,1,1)
+        elif "right" ==shortcut or "r"  ==shortcut :
+            set_lf_rf_lb_rb(1,0,0,0)
+        elif "left" ==shortcut or "l" ==shortcut :
+            set_lf_rf_lb_rb(0,1,0,0)
+        elif "fullright" ==shortcut or "fr" ==shortcut :
+            set_lf_rf_lb_rb(1,0,0,1)
+        elif "fullleft" ==shortcut or "fl" ==shortcut :
+            set_lf_rf_lb_rb(0,1,1,0)
 
 
 print("Hello World")
